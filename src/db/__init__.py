@@ -2,4 +2,4 @@ __all__ = [
     "db_dependency"
 ]
 
-from .database import db_dependency
+from .db_config import db_dependency
