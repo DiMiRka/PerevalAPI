@@ -7,7 +7,13 @@ from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
-    # postgres_dsn: PostgresDsn = MultiHostUrl(os.getenv("PG_LINK"))
+    postgres_user: str = os.getenv("POSTGRES_USER")
+    postgres_password: str = os.getenv("POSTGRES_PASSWORD")
+    postgres_host: str = os.getenv("POSTGRES_HOST")
+    postgres_port: str = os.getenv("POSTGRES_PORT")
+    postgres_db: str = os.getenv("POSTGRES_DB")
+    postgres_dsn: PostgresDsn = MultiHostUrl(
+        f'postgresql+asyncpg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}')
     app_port: int = 8000
     app_host: str = '0.0.0.0'
     reload: bool = True
