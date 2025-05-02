@@ -1,23 +1,41 @@
 from datetime import datetime
+from enum import Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, UniqueConstraint
+from sqlalchemy import ForeignKey, String, UniqueConstraint, Enum as SQLEnum
 from sqlalchemy.ext.declarative import declarative_base
-from decimal import Decimal
 
 Base = declarative_base()
+
+
+class StatusEnum(str, Enum):
+    NEW = 'new'
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
 
 
 class PassPoint(Base):
     __tablename__ = "pereval_added"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship("User", back_populates="pass_points")
+    user: Mapped["User"] = relationship("User", back_populates="pereval_added")
     coords_id: Mapped[int] = mapped_column(ForeignKey("coords.id"), unique=True)
+    images: Mapped[list["Images"]] = relationship("Images", back_populates="pereval_added")
     add_time: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     beautyTitle: Mapped[str] = mapped_column(String(20), nullable=False)
     title: Mapped[str] = mapped_column(String(20), nullable=False)
     other_titles: Mapped[str] = mapped_column(String(20), nullable=False)
     connect: Mapped[str] = mapped_column(String(100))
+    level_winter: Mapped[str] = mapped_column(String(10))
+    level_summer: Mapped[str] = mapped_column(String(10))
+    level_autumn: Mapped[str] = mapped_column(String(10))
+    level_spring: Mapped[str] = mapped_column(String(10))
+    status: Mapped[StatusEnum] = mapped_column(
+        SQLEnum(StatusEnum),
+        default=StatusEnum.NEW,
+        nullable=False,
+        index=True
+    )
 
 
 class User(Base):
@@ -42,8 +60,17 @@ class User(Base):
 
 
 class Coords(Base):
+    __tablename__ = "coords"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
     pass_point: Mapped["PassPoint"] = relationship("PassPoint", back_populates="coords", uselist=False)
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
     height: Mapped[int] = mapped_column()
+
+
+class Images(Base):
+    __tablename__ = "images"
+    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
+    pass_id: Mapped[int] = mapped_column(ForeignKey("pereval_added.id"))
+    pass_point: Mapped["PassPoint"] = relationship("PassPoint", back_populates="images")
+    title: Mapped[str] = mapped_column(String(100))
