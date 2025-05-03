@@ -4,6 +4,10 @@ from db import db_dependency
 from models import PassPoint, User, Coords, Images
 
 
+async def db_post_coords(db: db_dependency, coords_data: dict):
+    pass
+
+
 async def db_post_pass(db: db_dependency, pass_data: dict):
     beauty_title = pass_data["beauty_title"]
     title = pass_data["title"]
