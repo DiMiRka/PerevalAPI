@@ -19,7 +19,7 @@ class AppSettings(BaseSettings):
     postgres_dsn: PostgresDsn = MultiHostUrl(
         f'postgresql+asyncpg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}')
     app_port: int = 8000
-    app_host: str = '0.0.0.0'
+    app_host: str = 'localhost'
     reload: bool = True
     cpu_count: int | None = None
     algorithm: str = 'HS256'

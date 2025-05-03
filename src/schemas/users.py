@@ -21,10 +21,4 @@ class UserBase(BaseModel):
         except EmailNotValidError as e:
             raise ValueError(f"Некорректный email: {str(e)}")
 
-    @validator('phone')
-    def validate_phone(cls, v):
-        # Простая валидация телефонного номера
-        phone_pattern = r'^\+?[1-9]\d{1,14}$'
-        if not re.match(phone_pattern, v):
-            raise ValueError("Неверный формат телефонного номера")
-        return v
+

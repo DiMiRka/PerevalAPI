@@ -13,3 +13,4 @@ async def create_user(db: db_dependency, user: UserBase):
     user = user.dict()
 
     await db_crate_user(db, user)
+    return f"User create: {user}"
