@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+venv/
+/venv
+
+# Логи и бинарные файлы
+*.log
+*.o
+*.class
+
+# Системные файлы
+temp/
+tmp/
+
+# Git и IDE
+.git/
+.idea/
+
+# env
+.env
