@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+from pathlib import Path
 
 from pydantic import PostgresDsn
 from pydantic_core import MultiHostUrl
@@ -7,6 +8,7 @@ from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
 
+env_file = Path('.env.docker' if os.getenv('DOCKER_MODE') else '.env')
 load_dotenv()
 
 
@@ -19,7 +21,7 @@ class AppSettings(BaseSettings):
     postgres_dsn: PostgresDsn = MultiHostUrl(
         f'postgresql+asyncpg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}')
     app_port: int = 8000
-    app_host: str = 'localhost'
+    app_host: str = os.getenv("HOST")
     reload: bool = True
     cpu_count: int | None = None
     algorithm: str = 'HS256'
