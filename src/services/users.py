@@ -2,8 +2,8 @@ from db import db_dependency
 from models import User
 
 
-async def db_crate_user(db: db_dependency, user: dict):
-    """Added user to database"""
+async def db_create_user(db: db_dependency, user: dict):
+    """Добавить нового пользователя в базу данных"""
     email = user["email"]
     phone = user["phone"]
     fam = user["fam"]

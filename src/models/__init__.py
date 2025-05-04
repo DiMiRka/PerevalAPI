@@ -1,10 +1,12 @@
 __all__ = [
     "Base",
     "StatusEnum",
-    "PassPoint",
-    "User",
     "Coords",
-    "Images"
+    "PassPoint",
+    "Images",
+    "User"
 ]
 
-from .pass_point import Base, StatusEnum, PassPoint, User, Coords, Images
+from .base import Base
+from .pass_point import StatusEnum, PassPoint, Coords, Images
+from .user import User

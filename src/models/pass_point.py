@@ -1,41 +1,22 @@
 from datetime import datetime
 from enum import Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, UniqueConstraint, Enum as SQLEnum
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import ForeignKey, String, Enum as SQLEnum
 
-Base = declarative_base()
+from .base import Base
+from .user import User
 
 
 class StatusEnum(str, Enum):
+    """Статус созданного перевала"""
     NEW = 'new'
     PENDING = 'pending'
     ACCEPTED = 'accepted'
     REJECTED = 'rejected'
 
 
-class User(Base):
-    __tablename__ = "users"
-    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
-    pass_points: Mapped[list["PassPoint"]] = relationship("PassPoint", back_populates="user")
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    email: Mapped[str] = mapped_column(
-        String(255),
-        unique=True,
-        nullable=False,
-        index=True
-    )
-    phone: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
-    fam: Mapped[str] = mapped_column(String(50), nullable=False)
-    name: Mapped[str] = mapped_column(String(50), nullable=False)
-    otc: Mapped[str] = mapped_column(String(50))
-    __table_args__ = (
-        UniqueConstraint('email', name='uq_user_email'),
-        UniqueConstraint('phone', name='uq_user_phone'),
-    )
-
-
 class Coords(Base):
+    """Стандартная модель координат перевала"""
     __tablename__ = "coords"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
     pass_point: Mapped["PassPoint"] = relationship("PassPoint", back_populates="coords", uselist=False)
@@ -45,6 +26,7 @@ class Coords(Base):
 
 
 class PassPoint(Base):
+    """Стандартная модель перевала"""
     __tablename__ = "pereval_added"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
 
@@ -57,6 +39,7 @@ class PassPoint(Base):
     images: Mapped[list["Images"]] = relationship("Images", back_populates="pass_point")
 
     add_time: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
     beautyTitle: Mapped[str] = mapped_column(String(20), nullable=False)
     title: Mapped[str] = mapped_column(String(20), nullable=False)
     other_titles: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -65,6 +48,7 @@ class PassPoint(Base):
     level_summer: Mapped[str] = mapped_column(String(10))
     level_autumn: Mapped[str] = mapped_column(String(10))
     level_spring: Mapped[str] = mapped_column(String(10))
+
     status: Mapped[StatusEnum] = mapped_column(
         SQLEnum(StatusEnum),
         default=StatusEnum.NEW,
@@ -74,9 +58,10 @@ class PassPoint(Base):
 
 
 class Images(Base):
+    """Стандартная модель изображений перевала"""
     __tablename__ = "images"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True, index=True)
     pass_point_id: Mapped[int] = mapped_column(ForeignKey("pereval_added.id"))
     pass_point: Mapped["PassPoint"] = relationship("PassPoint", back_populates="images")
-    data: Mapped[str] = mapped_column(String(255))
+    url: Mapped[str] = mapped_column(String(255))
     title: Mapped[str] = mapped_column(String(100))

@@ -1,7 +1,7 @@
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
-from email_validator import validate_email, EmailNotValidError
 import re
+from email_validator import validate_email, EmailNotValidError
 
 
 class UserBase(BaseModel):
@@ -12,13 +12,17 @@ class UserBase(BaseModel):
     name: str = Field(..., max_length=50)
     otc: Optional[str] = Field(None, max_length=50)
 
-    @validator('email')
-    def validate_email(cls, v):
+    # Валидация поля email
+    @field_validator('email')
+    def validate_email(cls, v: str) -> str:
+        """Многоуровневая валидация email"""
         try:
-            # Проверка email с помощью библиотеки email-validator
-            email_info = validate_email(v, check_deliverability=False)
-            return email_info.normalized
+            # Проверка через email-validator
+            email_info = validate_email(
+                v,
+                check_deliverability=False,
+                allow_smtputf8=False
+            )
+            return email_info.normalized.lower()
         except EmailNotValidError as e:
-            raise ValueError(f"Некорректный email: {str(e)}")
-
-
+            raise ValueError(f"Invalid email: {str(e)}")
