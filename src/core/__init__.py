@@ -1,5 +1,6 @@
 __all__ = [
-    "app_settings"
+    "app_settings",
+    "uvicorn_options"
 ]
 
-from .config import app_settings
+from .config import app_settings, uvicorn_options
