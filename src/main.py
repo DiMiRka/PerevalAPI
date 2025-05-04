@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from core import uvicorn_options
+from core import uvicorn_options, app_settings
 from api import api_router
 
 
@@ -18,6 +18,8 @@ app.include_router(api_router)
 if __name__ == '__main__':
     print(uvicorn_options)
     uvicorn.run(
-        'main:app',
-        **uvicorn_options
+        "main:app",
+        host=app_settings.host,
+        port=app_settings.port,
+        reload=app_settings.reload
     )

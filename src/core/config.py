@@ -21,15 +21,18 @@ class AppSettings(BaseSettings):
 
     @property
     def postgres_dsn(self) -> PostgresDsn:
-        return PostgresDsn(
-            f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
-            f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        return PostgresDsn.build(
+            scheme="postgresql+asyncpg",
+            username=self.postgres_user,
+            password=self.postgres_password,
+            host=self.postgres_host,
+            port=int(self.postgres_port),
+            path=self.postgres_db
         )
 
-    app_host: str = Field(default='localhost', env='HOST')
-    app_port: int = Field(default=8000, env='PORT')
+    host: str = Field(default='localhost', env='HOST')  # Изменил app_host → host
+    port: int = Field(default=8000, env='PORT')  # Изменил app_port → port
     reload: bool = Field(default=True, env='RELOAD')
-    cpu_count: int | None = None
 
     class Config:
         _env_file = ".env"
@@ -41,8 +44,7 @@ app_settings = AppSettings()
 
 
 uvicorn_options = {
-    "host": app_settings.app_host,
-    "port": app_settings.app_port,
-    "workers": app_settings.cpu_count or multiprocessing.cpu_count(),
+    "host": app_settings.host,
+    "port": app_settings.port,
     "reload": app_settings.reload
 }
