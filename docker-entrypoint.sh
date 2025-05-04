@@ -1,5 +1,10 @@
 #!/bin/bash
 
+until pg_isready -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB; do
+  echo "Waiting for PostgreSQL..."
+  sleep 2
+done
+
 alembic upgrade head
 
-exec python src/main.py --host 0.0.0.0 --port 8000
+exec uvicorn src.main:app --host $HOST --port $PORT --reload
