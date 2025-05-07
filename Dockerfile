@@ -2,6 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+ENV PYTHONPATH=/app/src
 ENV DOCKER_MODE=1
 
 COPY requirements.txt .

@@ -28,7 +28,7 @@ def create_sessionmaker(
     )
 
 
-engine = create_async_engine(app_settings.postgres_dsn.unicode_string())
+engine = create_async_engine(str(app_settings.postgres_dsn))
 
 async_session = create_sessionmaker(engine)
 

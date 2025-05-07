@@ -1,7 +1,9 @@
 import asyncio
+import sys
+import os
 from logging.config import fileConfig
 
-from sqlalchemy import pool
+from sqlalchemy import pool, create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
@@ -10,10 +12,12 @@ from alembic import context
 from src.models import Base
 from src.core.config import app_settings
 
+sys.path.append(os.getcwd())
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option('sqlalchemy.url', app_settings.postgres_dsn.unicode_string())
+config.set_main_option('sqlalchemy.url', str(app_settings.postgres_dsn))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -83,8 +87,18 @@ async def run_async_migrations() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
+    connectable = create_engine(
+        str(app_settings.postgres_dsn),  # Явное преобразование в строку
+        pool_pre_ping=True
+    )
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata
+        )
 
-    asyncio.run(run_async_migrations())
+        with context.begin_transaction():
+            context.run_migrations()
 
 
 if context.is_offline_mode():
