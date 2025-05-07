@@ -14,7 +14,10 @@ from src.core.config import app_settings
 
 sys.path.append(os.getcwd())
 
-POSTGRES_DSN = "postgresql+asyncpg://postgres:postgres@db:5432/Pereval"
+POSTGRES_DSN = os.getenv(
+    "POSTGRES_URL",
+    "postgresql+asyncpg://postgres:postgres@db:5432/Pereval"
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -88,15 +91,7 @@ async def run_async_migrations() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-    connectable = create_engine(POSTGRES_DSN)
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=None
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
+    asyncio.run(run_async_migrations())
 
 
 if context.is_offline_mode():

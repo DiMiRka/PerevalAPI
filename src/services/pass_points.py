@@ -1,9 +1,10 @@
 from datetime import datetime
 from fastapi import HTTPException
-from db import db_dependency
-from models import PassPoint, Coords, Images, User, StatusEnum
-from schemas import PassResponse
-from schemas.pass_points import PassCreate
+
+from src.db import db_dependency
+from src.models import PassPoint, Coords, Images, User, StatusEnum
+from src.schemas import PassResponse
+from src.schemas.pass_points import PassCreate
 
 
 async def db_post_pass(db: db_dependency, pass_data: PassCreate):

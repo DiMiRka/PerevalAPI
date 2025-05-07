@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
-from models import StatusEnum
+from src.models import StatusEnum
 
 
 class CoordsSchema(BaseModel):

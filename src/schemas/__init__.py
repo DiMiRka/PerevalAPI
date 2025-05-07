@@ -6,5 +6,5 @@ __all__ = [
     "PassResponse"
 ]
 
-from .users import UserBase
-from .pass_points import CoordsSchema, ImageSchema, PassCreate, PassResponse
+from src.schemas.users import UserBase
+from src.schemas.pass_points import CoordsSchema, ImageSchema, PassCreate, PassResponse
