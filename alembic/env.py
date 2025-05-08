@@ -1,7 +1,9 @@
 import asyncio
+import sys
+import os
 from logging.config import fileConfig
 
-from sqlalchemy import pool
+from sqlalchemy import pool, create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
@@ -10,15 +12,21 @@ from alembic import context
 from src.models import Base
 from src.core.config import app_settings
 
+sys.path.append(os.getcwd())
+
+POSTGRES_DSN = os.getenv(
+    "POSTGRES_URL",
+    "postgresql+asyncpg://postgres:postgres@db:5432/Pereval"
+)
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option('sqlalchemy.url', app_settings.postgres_dsn.unicode_string())
+fileConfig(config.config_file_name)
+config.set_main_option('sqlalchemy.url', str(app_settings.postgres_dsn))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -83,7 +91,6 @@ async def run_async_migrations() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-
     asyncio.run(run_async_migrations())
 
 

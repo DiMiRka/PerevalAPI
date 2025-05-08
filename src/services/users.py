@@ -1,5 +1,5 @@
-from db import db_dependency
-from models import User
+from src.db import db_dependency
+from src.models import User
 
 
 async def db_create_user(db: db_dependency, user: dict):

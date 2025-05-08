@@ -3,7 +3,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import (async_sessionmaker, create_async_engine,
                                     AsyncSession, AsyncEngine, AsyncConnection)
 
-from core import app_settings
+from src.core import app_settings
 
 
 class InternalError(Exception):
@@ -28,7 +28,7 @@ def create_sessionmaker(
     )
 
 
-engine = create_async_engine(app_settings.postgres_dsn.unicode_string())
+engine = create_async_engine(str(app_settings.postgres_dsn))
 
 async_session = create_sessionmaker(engine)
 

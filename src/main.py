@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from core import uvicorn_options, app_settings
-from api import api_router
+from src.core import uvicorn_options, app_settings
+from src.api import api_router
 
 
 env_path = Path('.') / ('.env.docker' if os.getenv('DOCKER_MODE') else '.env')
