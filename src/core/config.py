@@ -1,9 +1,7 @@
-import multiprocessing
 import os
 from pathlib import Path
 
-from pydantic import PostgresDsn, Field
-from pydantic_core import MultiHostUrl
+from pydantic import Field
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
@@ -21,9 +19,6 @@ class AppSettings(BaseSettings):
 
     @property
     def postgres_dsn(self) -> str:
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-        print(f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}")
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
         return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
 
     host: str = Field(default='localhost', env='HOST')

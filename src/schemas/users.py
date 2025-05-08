@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
-import re
 from email_validator import validate_email, EmailNotValidError
 
 

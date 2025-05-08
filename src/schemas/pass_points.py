@@ -1,8 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
-
-from src.models import StatusEnum
 
 
 class CoordsSchema(BaseModel):
@@ -33,20 +30,3 @@ class PassCreate(BaseModel):
     level_summer: Optional[str] = None
     level_autumn: Optional[str] = None
     level_spring: Optional[str] = None
-
-
-class PassResponse(BaseModel):
-    """Модель представления перевала"""
-    id: int
-    beautyTitle: str
-    title: str
-    other_titles: Optional[str] = None
-    connect: Optional[str] = None
-    coords: CoordsSchema
-    images: List[ImageSchema]
-    user_id: int
-    add_time: datetime
-    status: StatusEnum
-
-    class Config:
-        from_attributes = True

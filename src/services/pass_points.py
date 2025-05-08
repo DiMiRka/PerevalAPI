@@ -3,7 +3,6 @@ from fastapi import HTTPException
 
 from src.db import db_dependency
 from src.models import PassPoint, Coords, Images, User, StatusEnum
-from src.schemas import PassResponse
 from src.schemas.pass_points import PassCreate
 
 
@@ -37,20 +36,4 @@ async def db_post_pass(db: db_dependency, pass_data: PassCreate):
     await db.commit()
     await db.refresh(db_pass)
 
-    # Формируем ответ
-    return PassResponse(
-        id=db_pass.id,
-        beautyTitle=db_pass.beautyTitle,
-        title=db_pass.title,
-        other_titles=db_pass.other_titles,
-        connect=db_pass.connect,
-        coords=pass_data.coords,
-        images=pass_data.images,
-        user_id=pass_data.user_id,
-        add_time=db_pass.add_time,
-        status=db_pass.status,
-        level_winter=db_pass.level_winter,
-        level_summer=db_pass.level_summer,
-        level_autumn=db_pass.level_autumn,
-        level_spring=db_pass.level_spring
-    )
+    return db_pass
