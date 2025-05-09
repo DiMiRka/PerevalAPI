@@ -1,10 +1,10 @@
 import logging
-from fastapi import status, APIRouter
+from fastapi import status, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
-from schemas.pass_points import PassCreate
+from schemas.pass_points import PassCreate, PassResponse
 from db import db_dependency
-from services import db_post_pass
+from services import db_post_pass, db_get_pass
 
 
 pass_router = APIRouter(prefix="/pass", tags=['pass'])
@@ -34,6 +34,27 @@ async def post_pass(db: db_dependency, pass_data: PassCreate):
                 "id": None
             }
         )
+    except Exception as e:
+        await db.rollback()
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "status": 500,
+                "message": f"Ошибка сервера: {str(e)}",
+                "id": None
+            }
+        )
+
+
+@pass_router.get("/pass/{id}", response_model=PassResponse)
+async def get_pass(db: db_dependency, pass_id: int):
+    try:
+        db_pass = await db_get_pass(db, int(pass_id))
+        if not db_pass:
+            raise HTTPException(status_code=404, detail="Pereval not found")
+
+        return db_pass
+
     except Exception as e:
         await db.rollback()
         return JSONResponse(

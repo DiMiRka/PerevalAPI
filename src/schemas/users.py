@@ -6,10 +6,10 @@ from email_validator import validate_email, EmailNotValidError
 class UserBase(BaseModel):
     """Базовая схема для пользователя"""
     email: EmailStr = Field(..., max_length=255)
-    phone: str = Field(..., max_length=20)
     fam: str = Field(..., max_length=50)
     name: str = Field(..., max_length=50)
     otc: Optional[str] = Field(None, max_length=50)
+    phone: str = Field(..., max_length=20)
 
     # Валидация поля email
     @field_validator('email')
