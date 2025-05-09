@@ -46,7 +46,7 @@ async def post_pass(db: db_dependency, pass_data: PassCreate):
         )
 
 
-@pass_router.get("/pass/{id}", response_model=PassResponse)
+@pass_router.get("/pass_get/{id}", response_model=PassResponse)
 async def get_pass(db: db_dependency, pass_id: int):
     try:
         db_pass = await db_get_pass(db, int(pass_id))
