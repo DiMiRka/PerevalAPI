@@ -3,8 +3,8 @@ __all__ = [
     "db_post_pass",
     "db_get_pass",
     "db_patch_pass",
-    "get_passes_email"
+    "db_get_passes_email"
 ]
 
 from src.services.users import db_create_user
-from src.services.pass_points import db_post_pass, db_get_pass, db_patch_pass, get_passes_email
+from src.services.pass_points import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email

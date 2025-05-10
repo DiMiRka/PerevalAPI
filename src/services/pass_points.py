@@ -117,7 +117,7 @@ async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: P
         }
 
 
-async def get_passes_email(db: db_dependency, email: str):
+async def db_get_passes_email(db: db_dependency, email: str):
     query = (
         select(PassPoint)
         .where(User.email == email)

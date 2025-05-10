@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from schemas.pass_points import PassCreate, PassResponse, PassUpdate
 from db import db_dependency
-from services import db_post_pass, db_get_pass, db_patch_pass, get_passes_email
+from services import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email
 
 
 pass_router = APIRouter(prefix="/pass", tags=['pass'])
@@ -97,13 +97,13 @@ async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
         )
 
 
-@pass_router.get("/pass_get_email")
+@pass_router.get("/pass_get_email", response_model=list[PassResponse])
 async def get_passes_email(db: db_dependency, email: str):
     try:
-        passes = await get_passes_email(db, email)
+        passes = await db_get_passes_email(db, email)
 
-        if passes is None:
-            raise HTTPException(status_code=404, detail="Email not found")
+        if not passes:
+            raise HTTPException(status_code=404, detail=f"No found for email {email}")
 
         return passes
 
