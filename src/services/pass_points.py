@@ -10,10 +10,21 @@ from src.schemas.pass_points import PassCreate, PassUpdate
 async def db_post_pass(db: db_dependency, pass_data: PassCreate):
     """Добавляем перевал с координатами и изображениями в базу данных"""
 
-    # Создаем пользователя
-    db_user = User(**pass_data.user.dict())
-    db.add(db_user)
-    await db.flush()
+    # Проверяем существует ли пользователь в базе данных
+    existing_user = await db.execute(
+        select(User).where(User.email == pass_data.user.email)
+
+    )
+    existing_user = existing_user.scalars().first()
+
+    if existing_user:
+        # Используем существующего пользователя
+        db_user = existing_user
+    else:
+        # Создаем пользователя
+        db_user = User(**pass_data.user.dict())
+        db.add(db_user)
+        await db.flush()
 
     # Создаем координаты
     coords_data = {
@@ -118,6 +129,7 @@ async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: P
 
 
 async def db_get_passes_email(db: db_dependency, email: str):
+    """Вносим изменения в существующий перевал"""
     query = (
         select(PassPoint)
         .where(User.email == email)

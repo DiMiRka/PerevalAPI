@@ -14,6 +14,7 @@ logger = logging.getLogger("pass_logger")
 
 @pass_router.post("/pass_post")
 async def post_pass(db: db_dependency, pass_data: PassCreate):
+    """Создать новый перевал"""
     try:
         db_pass = await db_post_pass(db, pass_data)
         return JSONResponse(
@@ -48,6 +49,7 @@ async def post_pass(db: db_dependency, pass_data: PassCreate):
 
 @pass_router.get("/pass_get/{id}", response_model=PassResponse)
 async def get_pass(db: db_dependency, pass_id: int):
+    """Получить перевал по его id"""
     try:
         db_pass = await db_get_pass(db, int(pass_id))
         if not db_pass:
@@ -69,6 +71,7 @@ async def get_pass(db: db_dependency, pass_id: int):
 
 @pass_router.patch("/pass_patch/{id}")
 async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
+    """Внести изменения в созданный перевал"""
     try:
         db_pass = await db_get_pass(db, pass_id)
 
@@ -99,6 +102,7 @@ async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
 
 @pass_router.get("/pass_get_email", response_model=list[PassResponse])
 async def get_passes_email(db: db_dependency, email: str):
+    """Получить все перевалы по email юзера"""
     try:
         passes = await db_get_passes_email(db, email)
 
@@ -117,4 +121,3 @@ async def get_passes_email(db: db_dependency, email: str):
                 "id": None
             }
         )
-

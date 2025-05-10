@@ -40,13 +40,10 @@ class PassCreate(BaseModel):
     other_titles: Optional[str] = Field(None, max_length=50)
     connect: Optional[str] = Field(None, max_length=50)
     add_time: Optional[datetime]
-    level_winter: Optional[str] = Field(None, max_length=10)
-    level_summer: Optional[str] = Field(None, max_length=10)
-    level_autumn: Optional[str] = Field(None, max_length=10)
-    level_spring: Optional[str] = Field(None, max_length=10)
 
     user: UserBase
     coords: CoordsSchema
+    level: LevelSchema
     images: List[ImageSchema]
 
 
