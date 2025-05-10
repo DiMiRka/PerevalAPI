@@ -66,3 +66,10 @@ class PassResponse(BaseModel):
     class Config:
         from_attributes = True
         arbitrary_types_allowed = True
+
+
+class PassUpdate(PassCreate):
+    class Config:
+        extra = "forbid"
+
+    user: Optional[dict] = None

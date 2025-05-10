@@ -2,9 +2,9 @@ import logging
 from fastapi import status, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
-from schemas.pass_points import PassCreate, PassResponse
+from schemas.pass_points import PassCreate, PassResponse, PassUpdate
 from db import db_dependency
-from services import db_post_pass, db_get_pass
+from services import db_post_pass, db_get_pass, db_patch_pass
 
 
 pass_router = APIRouter(prefix="/pass", tags=['pass'])
@@ -54,6 +54,36 @@ async def get_pass(db: db_dependency, pass_id: int):
             raise HTTPException(status_code=404, detail="Pereval not found")
 
         return db_pass
+
+    except Exception as e:
+        await db.rollback()
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "status": 500,
+                "message": f"Ошибка сервера: {str(e)}",
+                "id": None
+            }
+        )
+
+
+@pass_router.patch("/pass_patch/{id}")
+async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
+    try:
+        db_pass = await db_get_pass(db, pass_id)
+
+        if not db_pass:
+            raise HTTPException(status_code=404, detail="Pereval not found")
+
+        if db_pass.status != "new":
+            raise HTTPException(status_code=404, detail="The pass does not have the 'new'")
+
+        content = await db_patch_pass(db, db_pass, update_data)
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=content
+        )
 
     except Exception as e:
         await db.rollback()

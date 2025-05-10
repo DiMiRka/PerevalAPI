@@ -4,8 +4,9 @@ __all__ = [
     "ImageSchema",
     "LevelSchema",
     "PassCreate",
-    "PassResponse"
+    "PassResponse",
+    "PassUpdate"
 ]
 
 from src.schemas.users import UserBase
-from src.schemas.pass_points import CoordsSchema, ImageSchema, LevelSchema, PassCreate, PassResponse
+from src.schemas.pass_points import CoordsSchema, ImageSchema, LevelSchema, PassCreate, PassResponse, PassUpdate
