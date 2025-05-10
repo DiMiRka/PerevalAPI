@@ -13,6 +13,7 @@ class CoordsSchema(BaseModel):
 
 
 class CoordsResponse(BaseModel):
+    """Схема представления координат"""
     latitude: float
     longitude: float
     height: int
@@ -33,7 +34,7 @@ class LevelSchema(BaseModel):
 
 
 class PassCreate(BaseModel):
-    """Модель создания перевала"""
+    """Схема создания перевала"""
     beauty_title: str = Field(..., max_length=20)
     title: str = Field(..., max_length=30)
     other_titles: Optional[str] = Field(None, max_length=50)
@@ -50,6 +51,7 @@ class PassCreate(BaseModel):
 
 
 class PassResponse(BaseModel):
+    """Схема представления перевала"""
     id: int
     beauty_title: str = Field(..., max_length=20)
     title: str = Field(..., max_length=30)
@@ -69,6 +71,7 @@ class PassResponse(BaseModel):
 
 
 class PassUpdate(PassCreate):
+    """Схема обновления перевала"""
     class Config:
         extra = "forbid"
 

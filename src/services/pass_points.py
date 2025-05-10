@@ -69,6 +69,7 @@ async def db_get_pass(db: db_dependency, pass_id: int):
 
 
 async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: PassUpdate):
+    """Вносим изменения существующего перевала в базе данных"""
     try:
         #  Обновляем координаты (если они есть в update_data)
         if update_data.coords:
@@ -114,3 +115,17 @@ async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: P
             "state": 0,
             "message": f"Ошибка сервера: {str(e)}"
         }
+
+
+async def get_passes_email(db: db_dependency, email: str):
+    query = (
+        select(PassPoint)
+        .where(User.email == email)
+        .options(
+            selectinload(PassPoint.user),
+            selectinload(PassPoint.coords),
+            selectinload(PassPoint.images),
+        )
+    )
+    result = await db.execute(query)
+    return result.scalars().all()
