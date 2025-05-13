@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from db import db_dependency
-from schemas import UserBase
-from services import db_create_user
+from src.db import db_dependency
+from src.schemas import UserBase
+from src.services import db_create_user
 
 
 user_router = APIRouter(prefix="/user", tags=['user'])

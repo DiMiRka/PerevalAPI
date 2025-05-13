@@ -22,7 +22,7 @@ async def db_post_pass(db: db_dependency, pass_data: PassCreate):
         db_user = existing_user
     else:
         # Создаем пользователя
-        db_user = User(**pass_data.user.dict())
+        db_user = User(**pass_data.user.model_dump())
         db.add(db_user)
         await db.flush()
 
@@ -37,11 +37,11 @@ async def db_post_pass(db: db_dependency, pass_data: PassCreate):
     await db.flush()
 
     #  Разбираем уровни сложности перевала
-    level = pass_data.level.dict()
+    level = pass_data.level.model_dump()
 
     # Создаем перевал
     db_pass = PassPoint(
-        **pass_data.dict(exclude={'user', 'coords', 'level', 'images'}),
+        **pass_data.model_dump(exclude={'user', 'coords', 'level', 'images'}),
         user_id=db_user.id,
         coords_id=db_coords.id,
         status=StatusEnum.NEW,

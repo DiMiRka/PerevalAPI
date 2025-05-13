@@ -7,9 +7,9 @@ from src.schemas.users import UserBase
 
 class CoordsSchema(BaseModel):
     """Базовая схема для координат"""
-    latitude: str
-    longitude: str
-    height: str
+    latitude: float
+    longitude: float
+    height: int
 
 
 class CoordsResponse(BaseModel):
