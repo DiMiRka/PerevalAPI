@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 from src.schemas import PassCreate, UserBase, LevelSchema, CoordsSchema, ImageSchema, PassUpdate
 from src.models import PassPoint, StatusEnum
 from src.services import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email
