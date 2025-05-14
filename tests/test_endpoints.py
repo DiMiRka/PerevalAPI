@@ -64,13 +64,9 @@ async def test_post_pass_validation_error(client):
 
 @pytest.mark.asyncio
 async def test_get_pass_success(client, mock_db_session, mock_pass_point):
-    mock_pass = MagicMock()
-    mock_pass.id = 1
-    mock_pass.status = "new"
-
-    mock_result = MagicMock()
-    mock_result.scalars.return_value.first.return_value = mock_pass
-    mock_db_session.execute.return_value = mock_result
+    mock_db_session.execute.return_value.scalars.return_value.first.return_value = MagicMock(
+        id=1, status="new", beauty_title="Test Pass"
+    )
 
     response = client.get("/pass/pass_get/?pass_id=1")
 
@@ -93,11 +89,11 @@ async def test_get_pass_not_found(client, mock_db_session):
 
 @pytest.mark.asyncio
 async def test_patch_pass_success(client, mock_db_session, mock_pass_point):
-    mock_db_session.execute.side_effect = [
-        MagicMock(scalars=MagicMock(return_value=MagicMock(first=MagicMock(return_value=mock_pass_point)))), MagicMock()
-    ]
+    test_data = get_test_data()
+    test_data["user"]: {"additionalProp1": {}}
 
-    response = client.patch("/pass/pass_patch/?pass_id=1", json={"title": "New Title"})
+    response = client.patch("/pass/pass_patch/?pass_id=1", json=test_data)
+    print(response)
     assert response.status_code == 200
 
 
@@ -118,14 +114,11 @@ async def test_patch_pass_not_new_status(client, mock_db_session):
 
 @pytest.mark.asyncio
 async def test_get_passes_by_email_success(client, mock_db_session, mock_pass_point):
-    mock_pass = MagicMock()
-    mock_pass.id = 1
+    mock_db_session.execute.return_value.scalars.return_value.all.return_value = [
+        MagicMock(id=1, status="new")
+    ]
 
-    mock_db_session.execute.return_value = MagicMock(
-        scalars=MagicMock(return_value=MagicMock(all=MagicMock(return_value=[mock_pass])))
-    )
-
-    response = client.get("/pass/pass_get_email?email=test@example.com")
+    response = client.get("/pass/pass_get_email?email=test%40example.com")
 
     print(response.json())
     assert response.status_code == 200

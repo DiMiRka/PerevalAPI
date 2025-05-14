@@ -13,18 +13,12 @@ from src.models import PassPoint, User, Coords, Images
 def mock_db_session():
     session = AsyncMock(spec=AsyncSession)
 
-    # Настройка для успешных запросов
-    success_mock = MagicMock()
-    success_mock.scalars.return_value.first.return_value = MagicMock(id=1)
-    success_mock.scalars.return_value.all.return_value = [MagicMock(id=1)]
+    # Универсальный мок для execute
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.first.return_value = MagicMock(id=1)
+    mock_result.scalars.return_value.all.return_value = [MagicMock(id=1)]
 
-    # Настройка для пустых результатов
-    empty_mock = MagicMock()
-    empty_mock.scalars.return_value.first.return_value = None
-    empty_mock.scalars.return_value.all.return_value = []
-
-    # По умолчанию возвращаем успешный результат
-    session.execute.return_value = success_mock
+    session.execute = AsyncMock(return_value=mock_result)
     yield session
 
 
@@ -72,11 +66,4 @@ def mock_pass_point():
     mock.images[0].data = "test_test_test_test"
     mock.images[0].title = "Test Image"
 
-    return mock
-
-
-@pytest.fixture
-def mock_email ():
-    mock = MagicMock()
-    mock.send = AsyncMock(return_value=True)
     return mock

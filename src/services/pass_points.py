@@ -131,7 +131,7 @@ async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: P
 async def db_get_passes_email(db: db_dependency, email: str):
     """Вносим изменения в существующий перевал"""
     query = (
-        select(PassPoint)
+        select(PassPoint).join(User, PassPoint.user_id == User.id)
         .where(User.email == email)
         .options(
             selectinload(PassPoint.user),
