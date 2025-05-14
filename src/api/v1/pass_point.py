@@ -48,7 +48,7 @@ async def post_pass(db: db_dependency, pass_data: PassCreate):
         )
 
 
-@pass_router.get("/pass_get/{id}", response_model=PassResponse,
+@pass_router.get("/pass_get/", response_model=PassResponse,
                  summary="Получить перевал по его id",
                  description="Получить запись о перевале с данными пользователя, координатами и изображениями")
 async def get_pass(db: db_dependency, pass_id: int):
@@ -72,7 +72,7 @@ async def get_pass(db: db_dependency, pass_id: int):
         )
 
 
-@pass_router.patch("/pass_patch/{id}", summary="Изменить данные перевала",
+@pass_router.patch("/pass_patch/", summary="Изменить данные перевала",
                    description="При статусе перевала 'new' изменить запись о перевале, включая координаты и изображения")
 async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
     """Внести изменения в созданный перевал"""
@@ -104,7 +104,7 @@ async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
         )
 
 
-@pass_router.get("/pass_get_email", response_model=list[PassResponse],
+@pass_router.get("/pass_get_email/", response_model=list[PassResponse],
                  summary="Получить все перевалы пользователя по его email",
                  description="Получить список перевалов, созданные пользователем, включая "
                              "координаты, картинки и данные пользователя")

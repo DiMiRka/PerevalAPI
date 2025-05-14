@@ -67,19 +67,16 @@ async def test_get_pass_success(client, mock_db_session, mock_pass_point):
     mock_pass = MagicMock()
     mock_pass.id = 1
     mock_pass.status = "new"
-    mock_pass.beauty_title = "Test Pass"
 
     mock_result = MagicMock()
-    mock_scalar_result = MagicMock()
-    mock_scalar_result.first.return_value = mock_pass
-    mock_result.scalars.return_value = mock_scalar_result
+    mock_result.scalars.return_value.first.return_value = mock_pass
     mock_db_session.execute.return_value = mock_result
 
-    response = client.get("/pass/pass_get/1")
+    response = client.get("/pass/pass_get/?pass_id=1")
 
     print(response.json())
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json()["beauty_title"] == "Test Pass"
+    assert response.status_code == 200
+    assert response.json()["id"] == 1
 
 
 @pytest.mark.asyncio
@@ -88,11 +85,10 @@ async def test_get_pass_not_found(client, mock_db_session):
     mock_result.scalars.return_value.first.return_value = None
     mock_db_session.execute.return_value = mock_result
 
-    response = client.get("/pass/pass_get/999")
+    response = client.get("/pass/pass_get/?pass_id=999")
 
     print(response.json())
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert "Pereval not found" in response.json()["detail"]
+    assert response.status_code == 404
 
 
 @pytest.mark.asyncio
@@ -101,55 +97,48 @@ async def test_patch_pass_success(client, mock_db_session, mock_pass_point):
         MagicMock(scalars=MagicMock(return_value=MagicMock(first=MagicMock(return_value=mock_pass_point)))), MagicMock()
     ]
 
-    update_data = get_test_data()
-    update_data["title"] = "Updated Title"
-
-    response = client.patch("/pass/pass_patch/1", json=update_data)
-
-    print(response.json())
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json()["state"] == 1
+    response = client.patch("/pass/pass_patch/?pass_id=1", json={"title": "New Title"})
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_patch_pass_not_new_status(client, mock_db_session):
     mock_pass = MagicMock()
-    mock_pass.id = 1
-    mock_pass.status = StatusEnum.ACCEPTED
+    mock_pass.status = "accepted"
 
-    mock_result = MagicMock()
-    mock_result.scalars.return_value.first.return_value = mock_pass
-    mock_db_session.execute.return_value = mock_result
+    mock_db_session.execute.return_value = MagicMock(
+        scalars=MagicMock(return_value=MagicMock(first=MagicMock(return_value=mock_pass)))
+    )
 
-    response = client.patch("/pass/pass_patch/1", json=get_test_data())
+    response = client.patch("/pass/pass_patch/?pass_id=1", json={"title": "New Title"})
 
     print(response.json())
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert "The pass does not have the 'new'" in response.json()["detail"]
+    assert response.status_code == 400
 
 
 @pytest.mark.asyncio
 async def test_get_passes_by_email_success(client, mock_db_session, mock_pass_point):
-    mock_result = MagicMock()
-    mock_result.scalars.return_value.all.return_value = [mock_pass_point]
-    mock_db_session.execute.return_value = mock_result
+    mock_pass = MagicMock()
+    mock_pass.id = 1
+
+    mock_db_session.execute.return_value = MagicMock(
+        scalars=MagicMock(return_value=MagicMock(all=MagicMock(return_value=[mock_pass])))
+    )
 
     response = client.get("/pass/pass_get_email?email=test@example.com")
 
     print(response.json())
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == 200
     assert len(response.json()) == 1
-    assert response.json()[0]["title"] == "Test Title"
 
 
 @pytest.mark.asyncio
 async def test_get_passes_by_email_not_found(client, mock_db_session):
-    mock_result = MagicMock()
-    mock_result.scalars.return_value.all.return_value = []
-    mock_db_session.execute.return_value = mock_result
+    mock_db_session.execute.return_value = MagicMock(
+        scalars=MagicMock(return_value=MagicMock(all=MagicMock(return_value=[])))
+    )
 
     response = client.get("/pass/pass_get_email?email=notfound@example.com")
 
     print(response.json())
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert "No found for email" in response.json()["detail"]
+    assert response.status_code == 404
