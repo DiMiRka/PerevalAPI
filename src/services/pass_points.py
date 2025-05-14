@@ -1,4 +1,4 @@
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.future import select
 from sqlalchemy import update, delete
 
@@ -67,12 +67,11 @@ async def db_get_pass(db: db_dependency, pass_id: int):
     """Получаем перевал из базы данных по его id"""
     query = (
             select(PassPoint)
-            .where(PassPoint.id == pass_id)
             .options(
-                selectinload(PassPoint.user),
-                selectinload(PassPoint.coords),
-                selectinload(PassPoint.images),
-            )
+                joinedload(PassPoint.user),
+                joinedload(PassPoint.coords),
+                joinedload(PassPoint.images),
+            ).where(PassPoint.id == pass_id)
     )
     result = await db.execute(query)
     pass_point = result.scalars().first()
@@ -131,13 +130,12 @@ async def db_patch_pass(db: db_dependency, pass_point: PassPoint, update_data: P
 async def db_get_passes_email(db: db_dependency, email: str):
     """Вносим изменения в существующий перевал"""
     query = (
-        select(PassPoint).join(User, PassPoint.user_id == User.id)
-        .where(User.email == email)
+        select(PassPoint)
         .options(
-            selectinload(PassPoint.user),
-            selectinload(PassPoint.coords),
-            selectinload(PassPoint.images),
-        )
+            joinedload(PassPoint.user),
+            joinedload(PassPoint.coords),
+            joinedload(PassPoint.images),
+        ).where(User.email == email)
     )
     result = await db.execute(query)
     return result.scalars().all()

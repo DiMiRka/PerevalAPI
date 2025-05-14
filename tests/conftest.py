@@ -13,13 +13,21 @@ from src.models import PassPoint, User, Coords, Images
 def mock_db_session():
     session = AsyncMock(spec=AsyncSession)
 
-    # Универсальный мок для execute
     mock_result = MagicMock()
-    mock_result.scalars.return_value.first.return_value = MagicMock(id=1)
-    mock_result.scalars.return_value.all.return_value = [MagicMock(id=1)]
+    mock_result.scalars.return_value = MagicMock(
+        first=MagicMock(return_value=MagicMock(id=1, status="new")),
+        all=MagicMock(return_value=[MagicMock(id=1)]))
 
     session.execute = AsyncMock(return_value=mock_result)
+    session.commit = AsyncMock()
     yield session
+
+
+@pytest.fixture
+def mock_email_service():
+    mock = MagicMock()
+    mock.send = AsyncMock(return_value=True)
+    return mock
 
 
 @pytest.fixture
@@ -27,14 +35,16 @@ def client(mock_db_session):
     async def override_db_dependency():
         yield mock_db_session
 
-    original_overrides = app.dependency_overrides.copy()
-    app.dependency_overrides[db_dependency] = override_db_dependency
+    app.dependency_overrides = {
+        db_dependency: override_db_dependency,
+        # Добавляем мок для email-сервиса
+        "src.services.email_service": lambda: mock_email_service
+    }
 
     with TestClient(app) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()
-    app.dependency_overrides.update(original_overrides)
 
 
 @pytest.fixture
