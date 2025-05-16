@@ -1,8 +1,8 @@
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.future import select
 from sqlalchemy import update, delete
 
-from src.db import db_dependency
+from src.core import db_dependency
 from src.models import PassPoint, Coords, Images, User, StatusEnum
 from src.schemas.pass_points import PassCreate, PassUpdate
 
@@ -22,7 +22,7 @@ async def db_post_pass(db: db_dependency, pass_data: PassCreate):
         db_user = existing_user
     else:
         # Создаем пользователя
-        db_user = User(**pass_data.user.dict())
+        db_user = User(**pass_data.user.model_dump())
         db.add(db_user)
         await db.flush()
 
@@ -37,11 +37,11 @@ async def db_post_pass(db: db_dependency, pass_data: PassCreate):
     await db.flush()
 
     #  Разбираем уровни сложности перевала
-    level = pass_data.level.dict()
+    level = pass_data.level.model_dump()
 
     # Создаем перевал
     db_pass = PassPoint(
-        **pass_data.dict(exclude={'user', 'coords', 'level', 'images'}),
+        **pass_data.model_dump(exclude={'user', 'coords', 'level', 'images'}),
         user_id=db_user.id,
         coords_id=db_coords.id,
         status=StatusEnum.NEW,
@@ -67,12 +67,11 @@ async def db_get_pass(db: db_dependency, pass_id: int):
     """Получаем перевал из базы данных по его id"""
     query = (
             select(PassPoint)
-            .where(PassPoint.id == pass_id)
             .options(
-                selectinload(PassPoint.user),
-                selectinload(PassPoint.coords),
-                selectinload(PassPoint.images),
-            )
+                joinedload(PassPoint.user),
+                joinedload(PassPoint.coords),
+                joinedload(PassPoint.images),
+            ).where(PassPoint.id == pass_id)
     )
     result = await db.execute(query)
     pass_point = result.scalars().first()
@@ -132,12 +131,11 @@ async def db_get_passes_email(db: db_dependency, email: str):
     """Вносим изменения в существующий перевал"""
     query = (
         select(PassPoint)
-        .where(User.email == email)
         .options(
-            selectinload(PassPoint.user),
-            selectinload(PassPoint.coords),
-            selectinload(PassPoint.images),
-        )
+            joinedload(PassPoint.user),
+            joinedload(PassPoint.coords),
+            joinedload(PassPoint.images),
+        ).where(User.email == email)
     )
     result = await db.execute(query)
     return result.scalars().all()

@@ -2,9 +2,9 @@ import logging
 from fastapi import status, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
-from schemas.pass_points import PassCreate, PassResponse, PassUpdate
-from db import db_dependency
-from services import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email
+from src.schemas.pass_points import PassCreate, PassResponse, PassUpdate
+from src.core import db_dependency
+from src.services import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email
 
 
 pass_router = APIRouter(prefix="/pass", tags=['pass'])
@@ -12,7 +12,8 @@ pass_router = APIRouter(prefix="/pass", tags=['pass'])
 logger = logging.getLogger("pass_logger")
 
 
-@pass_router.post("/pass_post")
+@pass_router.post("/pass_post", summary="Добавить новый перевал",
+                  description="Создает новую запись о перевале с данными пользователя, координатами и изображениями")
 async def post_pass(db: db_dependency, pass_data: PassCreate):
     """Создать новый перевал"""
     try:
@@ -47,7 +48,9 @@ async def post_pass(db: db_dependency, pass_data: PassCreate):
         )
 
 
-@pass_router.get("/pass_get/{id}", response_model=PassResponse)
+@pass_router.get("/pass_get/", response_model=PassResponse,
+                 summary="Получить перевал по его id",
+                 description="Получить запись о перевале с данными пользователя, координатами и изображениями")
 async def get_pass(db: db_dependency, pass_id: int):
     """Получить перевал по его id"""
     try:
@@ -69,7 +72,8 @@ async def get_pass(db: db_dependency, pass_id: int):
         )
 
 
-@pass_router.patch("/pass_patch/{id}")
+@pass_router.patch("/pass_patch/", summary="Изменить данные перевала",
+                   description="При статусе перевала 'new' изменить запись о перевале, включая координаты и изображения")
 async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
     """Внести изменения в созданный перевал"""
     try:
@@ -100,7 +104,10 @@ async def patch_pass(db: db_dependency, pass_id: int, update_data: PassUpdate):
         )
 
 
-@pass_router.get("/pass_get_email", response_model=list[PassResponse])
+@pass_router.get("/pass_get_email/", response_model=list[PassResponse],
+                 summary="Получить все перевалы пользователя по его email",
+                 description="Получить список перевалов, созданные пользователем, включая "
+                             "координаты, картинки и данные пользователя")
 async def get_passes_email(db: db_dependency, email: str):
     """Получить все перевалы по email юзера"""
     try:
