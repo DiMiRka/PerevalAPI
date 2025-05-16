@@ -2,7 +2,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.future import select
 from sqlalchemy import update, delete
 
-from src.db import db_dependency
+from src.core import db_dependency
 from src.models import PassPoint, Coords, Images, User, StatusEnum
 from src.schemas.pass_points import PassCreate, PassUpdate
 

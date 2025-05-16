@@ -1,4 +1,4 @@
-from src.db import db_dependency
+from src.core import db_dependency
 from src.models import User
 
 

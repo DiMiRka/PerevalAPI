@@ -8,7 +8,6 @@ from datetime import datetime
 
 @pytest.mark.asyncio
 async def test_db_post_pass(mock_db_session):
-    # Подготовка тестовых данных
     test_data = PassCreate(
         beauty_title="Test Pass",
         title="Test Title",
@@ -27,12 +26,10 @@ async def test_db_post_pass(mock_db_session):
         images=[ImageSchema(data="img1", title="Image 1")]
     )
 
-    # Настройка моков
     mock_result = MagicMock()
     mock_result.scalars.return_value.first.return_value = None
     mock_db_session.execute.return_value = mock_result
 
-    # Мок для возвращаемого значения
     mock_pass = MagicMock(spec=PassPoint)
     mock_pass.beauty_title = "Test Pass"
     mock_pass.status = StatusEnum.NEW
@@ -40,7 +37,6 @@ async def test_db_post_pass(mock_db_session):
     with patch('src.models.PassPoint', return_value=mock_pass):
         result = await db_post_pass(mock_db_session, test_data)
 
-    # Проверки
     assert result.beauty_title == "Test Pass"
     assert result.status == StatusEnum.NEW
     mock_db_session.add.assert_called()
@@ -49,12 +45,10 @@ async def test_db_post_pass(mock_db_session):
 
 @pytest.mark.asyncio
 async def test_db_get_pass(mock_db_session):
-    # Создаём мок перевала
     mock_pass = MagicMock(spec=PassPoint)
     mock_pass.id = 1
     mock_pass.beauty_title = "Test Pass"
 
-    # Настройка моков
     mock_result = MagicMock()
     mock_result.scalars.return_value.first.return_value = mock_pass
     mock_db_session.execute.return_value = mock_result
@@ -67,12 +61,10 @@ async def test_db_get_pass(mock_db_session):
 
 @pytest.mark.asyncio
 async def test_db_patch(mock_db_session):
-    # Мок существующего перевала
     mock_pass = MagicMock(spec=PassPoint)
     mock_pass.id = 1
     mock_pass.coords_id = 1
 
-    # Тестовые данные для обновления
     update_data = PassUpdate(
         beauty_title="Updated Title",
         title="New Title",

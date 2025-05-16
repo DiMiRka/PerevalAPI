@@ -3,7 +3,7 @@ from fastapi import status, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
 from src.schemas.pass_points import PassCreate, PassResponse, PassUpdate
-from src.db import db_dependency
+from src.core import db_dependency
 from src.services import db_post_pass, db_get_pass, db_patch_pass, db_get_passes_email
 
 

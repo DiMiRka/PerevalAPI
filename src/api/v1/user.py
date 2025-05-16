@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.db import db_dependency
+from src.core import db_dependency
 from src.schemas import UserBase
 from src.services import db_create_user
 
