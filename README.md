@@ -117,7 +117,7 @@ PerevalAPI/
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=dima-784512
+POSTGRES_PASSWORD=postgres
 POSTGRES_DB=Pereval
 
 # Настройки приложения
